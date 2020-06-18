@@ -4,19 +4,25 @@ import de.tub.dima.scotty.core.*;
 import de.tub.dima.scotty.core.windowFunction.*;
 import de.tub.dima.scotty.core.windowType.*;
 import de.tub.dima.scotty.slicing.slice.*;
+import de.tub.dima.scotty.slicing.util.DateTimeUtil;
 import de.tub.dima.scotty.state.*;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class AggregateWindowState implements AggregateWindow {
 
     private final long start;
+    private final ZonedDateTime startZ;
+    private final ZonedDateTime endZ;
     private final long endTs;
     private final WindowMeasure measure;
     private final AggregateState windowState;
 
     public AggregateWindowState(long startTs, long endTs, WindowMeasure measure, StateFactory stateFactory, List<AggregateFunction> windowFunctionList) {
         this.start = startTs;
+        this.startZ = DateTimeUtil.parse(startTs);
+        this.endZ = DateTimeUtil.parse(endTs);
         this.endTs = endTs;
         this.windowState = new AggregateState(stateFactory, windowFunctionList);
         this.measure = measure;
@@ -77,7 +83,7 @@ public class AggregateWindowState implements AggregateWindow {
     public String toString() {
         return "WindowResult(" +
                 measure.toString() + ","+
-                start + "-" + endTs +
+                startZ.getSecond() + "-" + endZ.getSecond() +
                 "," + windowState +
                 ')';
     }
